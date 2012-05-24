@@ -1,9 +1,9 @@
+;;; revive.el --- Resume Emacs
 ;;; -*- Emacs-Lisp -*-
 ;;; <plaintext>
-;;; revive.el: Resume Emacs.
-;;; (c) 1994-2003 by HIROSE Yuuji [yuuji@gentei.org]
+;;; (c) 1994-2012 by HIROSE Yuuji [yuuji@gentei.org]
 ;;; $Id: revive.el,v 2.19 2008/05/13 01:19:16 yuuji Exp yuuji $
-;;; Last modified Wed May  4 07:25:06 2011 on firestorm
+;;; Last modified Sat May 19 08:03:56 2012 on firestorm
 
 ;;;[[[   NOTICE 注意 NOTICE 注意 NOTICE 注意 NOTICE 注意 NOTICE 注意   ]]]
 ;;;--------------------------------------------------------------------------
@@ -12,6 +12,8 @@
 ;;;	windows.elを普段使っている場合は revive.el のためのキーの割り当
 ;;;	てもautoloadの設定もする必要がありません。
 ;;;--------------------------------------------------------------------------
+;;;
+;;; Commentary:
 ;;;
 ;;;		Resume Emacs:		revive.el
 ;;;
@@ -167,11 +169,11 @@
 ;;;
 ;;;【変数のセーブ】
 ;;;
-;;;	  変数の値もセーブしておくことができます。デフォルトでセーブする 
+;;;	  変数の値もセーブしておくことができます。デフォルトでセーブする
 ;;;	global 変数は revive:save-variables-global-default に、local 変
 ;;;	数は revive:save-variables-local-default に定義されています。ほ
-;;;	かの変数も保存したい場合は、revive:save-variables-global-private 
-;;;	に global 変数名を、revive:save-variables-local-private に local 
+;;;	かの変数も保存したい場合は、revive:save-variables-global-private
+;;;	に global 変数名を、revive:save-variables-local-private に local
 ;;;	変数名をそれぞれリストの形で定義しておきます。例えば gmhist を使っ
 ;;;	ている場合には、
 ;;;
@@ -183,7 +185,7 @@
 ;;;【普通でないバッファの扱い】
 ;;;
 ;;;	  mh-rmail ではカレントバッファが mh-folder-mode, gnus ではカレ
-;;;	ントバッファが gnus-Group-mode になります。この対応関係は、変数 
+;;;	ントバッファが gnus-Group-mode になります。この対応関係は、変数
 ;;;	revive:major-mode-command-alist-default に書かれています。この変
 ;;;	数に登録されている以外のものを定義したい場合は、
 ;;;
@@ -209,8 +211,8 @@
 ;;;
 ;;;	  最初は resume というファイル名だったのですが、Emacs 19 のディ
 ;;;	レクトリに resume.el というファイルがあってショックを受けました。
-;;;	こちらはコマンドラインで何回 emacs と打っても、既に起動している 
-;;;	emacs にファイルを渡すというだけの(ピーー)プログラムで「どこが 
+;;;	こちらはコマンドラインで何回 emacs と打っても、既に起動している
+;;;	emacs にファイルを渡すというだけの(ピーー)プログラムで「どこが
 ;;;	resume やねん」と言いたくなりましたが我慢して revive.el にリネー
 ;;;	ムしました。ああまったく、saveconf でも desktop でもなし得なかっ
 ;;;	たウィンドウ分割状態の復元をサポートしたと言うのに…、なんてこと
@@ -224,6 +226,8 @@
 ;;;	す。お気軽にご連絡下さい。連絡は以下のアドレスまでお願いいたしま
 ;;;	す(2003/6現在)。
 ;;;							yuuji@gentei.org
+
+;;; Code:
 
 (defconst revive:version
   "$Id: revive.el,v 2.19 2008/05/13 01:19:16 yuuji Exp yuuji $"
@@ -382,7 +386,7 @@ EDGES is a list of sub-windows' edges."
      ;; |top   |2 |  horizontally.  And call this function recursively on
      ;; +---+--+--+  former (that is, upper half in vertical division or
      ;; |3  |4..  |  left half in horizontal) and latter configuration.
-     ;; +---+-----+  
+     ;; +---+-----+
      (t
       (let ((flist (list topwin))
 	    (elist (cdr edges)) divwin div-x div-y former latter)
@@ -427,11 +431,11 @@ EDGES is a list of sub-windows' edges."
     ;;(cc-mode		. revive:c-set-style)
     ;;(java-mode		. revive:c-set-style)
     )
-  "Default alist of major-mode vs. command name.")
+  "Default alist of `major-mode' vs. command name.")
 (defvar revive:major-mode-command-alist-private nil
   "*User defined revive:major-mode-command-alist")
 (defvar revive:major-mode-command-alist nil
-  "*Alist of major-mode vs. commandname.")
+  "*Alist of `major-mode' vs. commandname.")
 (setq revive:major-mode-command-alist
       (append revive:major-mode-command-alist-private
 	      revive:major-mode-command-alist-default))
@@ -515,8 +519,7 @@ window-edges whose first member is always of north west window.
 Buffer-List is a list of buffer property list of all windows.  This
 property lists are stored in order corresponding to Edge-List.  Buffer
 property list is formed as
-'((buffer-file-name) (buffer-name) (point) (window-start)).
-"
+'((buffer-file-name) (buffer-name) (point) (window-start))."
   (let ((curwin (selected-window))
 	(wlist (revive:window-list)) (edges (revive:all-window-edges)) buflist)
     (save-excursion
@@ -613,7 +616,7 @@ current-window-configuration-printable."
 
 (defun revive:varlist (var2save)
   "Return the (variable . value) list of variables in VAR2SAVE."
-  (delq nil (mapcar 
+  (delq nil (mapcar
 	     (function (lambda (s)
 			 (if (and s (boundp s)) (cons s (symbol-value s)))))
 	     var2save)))
@@ -643,7 +646,7 @@ Variable-List is a return value of revive:varlist."
 	(local-var (append revive:save-variables-local-default
 			   revive:save-variables-local-private))
 	(mode-local-var (append revive:save-variables-mode-local-default
-				revive:save-variables-mode-local-private))) 
+				revive:save-variables-mode-local-private)))
     (save-excursion
       (run-hooks 'revive:buffer-property-list-hook)
       (while buflist
@@ -847,7 +850,7 @@ Configuration should be saved by save-current-configuration."
 	    "~/"))
   (or (and (boundp 'mew-path) mew-path)
       (and (fboundp 'mew-init) (let (mew-demo) (mew-init))))
-  (mew-cache-flush)			;Mew should take more care of 
+  (mew-cache-flush)			;Mew should take more care of
   (get-buffer-create " *mew tmp*")	;unexisting buffer...
   (let ((b (revive:prop-buffer-name x)))
     (cond
@@ -982,3 +985,4 @@ Configuration should be saved by save-current-configuration."
 ; paragraph-start: "^$\\|\\|;;;$"
 ; paragraph-separate: "^$\\|\\|;;;$"
 ; End:
+;;; revive.el ends here
