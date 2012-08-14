@@ -1,9 +1,7 @@
-;;; -*- coding: euc-jp -*-
-;;; revive.el --- Resume Emacs
-;;; <plaintext>
+;;; revive.el --- Resume Emacs -*- coding: euc-jp -*-
 ;;; (c) 1994-2012 by HIROSE Yuuji [yuuji@gentei.org]
-;;; $Id: revive.el,v 2.21 2012/08/12 11:56:06 yuuji Exp $
-;;; Last modified Sun Aug 12 09:01:47 2012 on firestorm
+;;; $Id: revive.el,v 2.21 2012/08/12 11:56:06 yuuji Exp yuuji $
+;;; Last modified Tue Aug 14 08:34:28 2012 on firestorm
 
 ;;;[[[   NOTICE 注意 NOTICE 注意 NOTICE 注意 NOTICE 注意 NOTICE 注意   ]]]
 ;;;--------------------------------------------------------------------------
@@ -224,13 +222,13 @@
 ;;;	ムを使用して生じたいかなる結果に対しても作者は一切の責任を負わな
 ;;;	いものといたしますが、コメントやバグレポートは大いに歓迎いたしま
 ;;;	す。お気軽にご連絡下さい。連絡は以下のアドレスまでお願いいたしま
-;;;	す(2003/6現在)。
+;;;	す(2012/8現在)。
 ;;;							yuuji@gentei.org
 
 ;;; Code:
 
 (defconst revive:version
-  "$Id: revive.el,v 2.21 2012/08/12 11:56:06 yuuji Exp $"
+  "$Id: revive.el,v 2.21 2012/08/12 11:56:06 yuuji Exp yuuji $"
   "Version of revive.el")
 
 (defconst revive:version-prefix ";;;")
@@ -430,6 +428,7 @@ EDGES is a list of sub-windows' edges."
     ;;(c-mode		. revive:c-set-style)
     ;;(cc-mode		. revive:c-set-style)
     ;;(java-mode		. revive:c-set-style)
+    (twittering-mode . revive:twittering)
     )
   "Default alist of `major-mode' vs. command name.")
 (defvar revive:major-mode-command-alist-private nil
@@ -466,7 +465,8 @@ EDGES is a list of sub-windows' edges."
     (yahtml-mode YaTeX-parent-file)
     (c-mode c-indentation-style c-basic-offset)
     (cc-mode c-indentation-style c-basic-offset)
-    (java-mode c-indentation-style c-basic-offset))
+    (java-mode c-indentation-style c-basic-offset)
+    (twittering-mode twittering-timeline-spec-string))
   "Default list of the mode specific local variables to save.
 Actually, revive doesn't make the buffer local variables assuming
 those variable have already localized by their major mode.")
@@ -887,14 +887,20 @@ Configuration should be saved by save-current-configuration."
   (require 'cc-mode)
   (revive:find-file (revive:prop-file-name x))
   (funcall (revive:prop-major-mode x))
-  (c-set-style (or (revive:prop-get-value x 'c-indentation-style) "gnu"))
-)
+  (c-set-style (or (revive:prop-get-value x 'c-indentation-style) "gnu")))
 
-;;(provide 'resume)
+(defun revive:twittering ()
+  "Restore buffer of twittering mode.
+This functionality is considered to be migrated from `twittering-mode'."
+  (interactive)
+  (require 'twittering-mode)
+  (twittering-visit-timeline
+   (revive:prop-get-value x 'twittering-timeline-spec-string)))
+
 (provide 'revive)
 
 
-;; $Id: revive.el,v 2.21 2012/08/12 11:56:06 yuuji Exp $
+;; $Id: revive.el,v 2.21 2012/08/12 11:56:06 yuuji Exp yuuji $
 ;; $Log: revive.el,v $
 ;; Revision 2.21  2012/08/12 11:56:06  yuuji
 ;; Switched to euc-jp.
