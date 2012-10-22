@@ -1,7 +1,7 @@
 ;;; revive.el --- Resume Emacs -*- coding: euc-jp -*-
 ;;; (c) 1994-2012 by HIROSE Yuuji [yuuji@gentei.org]
 ;;; $Id: revive.el,v 2.21 2012/08/12 11:56:06 yuuji Exp yuuji $
-;;; Last modified Tue Aug 14 08:34:28 2012 on firestorm
+;;; Last modified Thu Oct 18 14:47:17 2012 on firestorm
 
 ;;;[[[   NOTICE 注意 NOTICE 注意 NOTICE 注意 NOTICE 注意 NOTICE 注意   ]]]
 ;;;--------------------------------------------------------------------------
@@ -757,6 +757,7 @@ Variable-List is a return value of revive:varlist."
 	    (rename-buffer (revive:prop-buffer-name x)))
 	(set-mark (revive:prop-mark x))
 	(goto-char (revive:prop-point x))
+	(and (fboundp 'region-active-p) (region-active-p) (deactivate-mark))
 	(revive:restore-value (revive:prop-varlist x))))
       (setq blist (cdr blist)))
     (run-hooks 'revive:restore-buffers-hook)))
