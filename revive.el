@@ -1,7 +1,7 @@
 ;;; revive.el --- Resume Emacs -*- coding: euc-jp -*-
 ;;; (c) 1994-2014 by HIROSE Yuuji [yuuji@gentei.org]
-;;; $Id: revive.el,v 2.22 2014/04/02 14:25:14 yuuji Exp $
-;;; Last modified Wed Apr  2 23:25:14 2014 on firestorm
+;;; $Id: revive.el,v 2.22 2014/04/02 14:25:14 yuuji Exp yuuji $
+;;; Last modified Sat Mar 14 08:39:35 2015 on firestorm
 
 ;;;[[[   NOTICE 注意 NOTICE 注意 NOTICE 注意 NOTICE 注意 NOTICE 注意   ]]]
 ;;;--------------------------------------------------------------------------
@@ -228,7 +228,7 @@
 ;;; Code:
 
 (defconst revive:version
-  "$Id: revive.el,v 2.22 2014/04/02 14:25:14 yuuji Exp $"
+  "$Id: revive.el,v 2.22 2014/04/02 14:25:14 yuuji Exp yuuji $"
   "Version of revive.el")
 
 (defconst revive:version-prefix ";;;")
@@ -703,7 +703,8 @@ Variable-List is a return value of revive:varlist."
     (widen)
     (goto-char (point-min))
     (and (search-forward revive:version-prefix nil t)
-	 (goto-char (match-beginning 0)) (kill-line 1))
+	 (goto-char (match-beginning 0))
+	 (delete-region (point) (progn (forward-line 1) (point))))
     (insert (format "%s%s\n" revive:version-prefix revive:version))
     (setq num (or num 1))
     (if (re-search-forward (format "^(%d" num) nil t)
@@ -780,8 +781,8 @@ Configuration should be saved by save-current-configuration."
 			   (buffer-substring
 			    (point)
 			    (prog2 (end-of-line) (point)))))
-	     (y-or-n-p
-	      "Configuration file's version conflicts. Continue?"))
+	     (not (y-or-n-p
+		   "Configuration file's version conflicts. Continue?")))
 	(error "Configuration file is old.  Please update."))
     (if (null (re-search-forward (format "^(%d" num) nil t))
 	(error "Configuration empty."))
@@ -902,7 +903,7 @@ This functionality is considered to be migrated from `twittering-mode'."
 (provide 'revive)
 
 
-;; $Id: revive.el,v 2.22 2014/04/02 14:25:14 yuuji Exp $
+;; $Id: revive.el,v 2.22 2014/04/02 14:25:14 yuuji Exp yuuji $
 ;; $Log: revive.el,v $
 ;; Revision 2.22  2014/04/02 14:25:14  yuuji
 ;; Check existence of buffer
