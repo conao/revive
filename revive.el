@@ -1,7 +1,7 @@
 ;;; revive.el --- Resume Emacs -*- coding: euc-jp -*-
 ;;; (c) 1994-2014 by HIROSE Yuuji [yuuji@gentei.org]
-;;; $Id: revive.el,v 2.22 2014/04/02 14:25:14 yuuji Exp yuuji $
-;;; Last modified Sat Mar 14 08:39:35 2015 on firestorm
+;;; $Id: revive.el,v 2.23 2015/03/20 04:03:45 yuuji Exp $
+;;; Last modified Fri Mar 20 13:02:24 2015 on firestorm
 
 ;;;[[[   NOTICE 注意 NOTICE 注意 NOTICE 注意 NOTICE 注意 NOTICE 注意   ]]]
 ;;;--------------------------------------------------------------------------
@@ -228,7 +228,7 @@
 ;;; Code:
 
 (defconst revive:version
-  "$Id: revive.el,v 2.22 2014/04/02 14:25:14 yuuji Exp yuuji $"
+  "$Id: revive.el,v 2.23 2015/03/20 04:03:45 yuuji Exp $"
   "Version of revive.el")
 
 (defconst revive:version-prefix ";;;")
@@ -709,7 +709,8 @@ Variable-List is a return value of revive:varlist."
     (setq num (or num 1))
     (if (re-search-forward (format "^(%d" num) nil t)
 	(progn (goto-char (match-beginning 0))
-	       (kill-sexp 1) (delete-char 1))
+	       (delete-region (point) (progn (forward-list 1)(point)))
+	       (delete-char 1))
       (goto-char (point-max)))
     (delete-blank-lines)
     (if (not (bolp)) (newline 1))
@@ -903,8 +904,11 @@ This functionality is considered to be migrated from `twittering-mode'."
 (provide 'revive)
 
 
-;; $Id: revive.el,v 2.22 2014/04/02 14:25:14 yuuji Exp yuuji $
+;; $Id: revive.el,v 2.23 2015/03/20 04:03:45 yuuji Exp $
 ;; $Log: revive.el,v $
+;; Revision 2.23  2015/03/20 04:03:45  yuuji
+;; Summary: kill-sexp replaced to delete-region
+;;
 ;; Revision 2.22  2014/04/02 14:25:14  yuuji
 ;; Check existence of buffer
 ;;
